@@ -3,7 +3,7 @@ export class DeviceModel {
 
     public id = ''
 
-    constructor(arg?: DeviceModel) {
+    constructor(arg?: Partial<DeviceModel>) {
         Object.assign(this, arg)
     }
 
