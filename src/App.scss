@@ -1,0 +1,12 @@
+.app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+canvas {
+    background: #041830;
+    flex: 1;
+  }

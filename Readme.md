@@ -1,0 +1,1 @@
+clone the repo, `yarn install` and `yarn dev` 
