@@ -23,7 +23,7 @@ export const useDrag = (options?: UseDragOptions) => {
     const camera = options?.camera || three.camera
     const ref = options?.ref || defaultRef
 
-    const [, enableControls] = useContext(camContext)
+    const [, lockControls] = useContext(camContext)
 
     const plane = useRef(new THREE.Plane())
     const worldPosition = useRef(new THREE.Vector3())
@@ -46,15 +46,19 @@ export const useDrag = (options?: UseDragOptions) => {
             offset.current.copy(e.object.position).sub(intersects.current)
 
             setIsDragging(true)
-            enableControls(false)
+            if (lockControls) {
+                lockControls(true)
+            }
         },
-        [setIsDragging, camera, enableControls, intersects, offset, raycaster, mouse],
+        [setIsDragging, camera, lockControls, intersects, offset, raycaster, mouse],
     )
 
     const onPointerUp = useCallback(() => {
         setIsDragging(false)
-        enableControls(true)
-    }, [setIsDragging, enableControls])
+        if (lockControls) {
+            lockControls(false)
+        }
+    }, [setIsDragging, lockControls])
 
     useFrame(() => {
         raycaster.setFromCamera(mouse, camera)

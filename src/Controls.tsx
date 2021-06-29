@@ -12,7 +12,7 @@ interface Props {
 
 export const Controls: FunctionComponent<Props> = ({ children }: Props) => {
     const { gl, camera } = useThree()
-    const api = useState(true)
+    const controlsLock = useState(false)
 
     return (
         <>
@@ -20,9 +20,9 @@ export const Controls: FunctionComponent<Props> = ({ children }: Props) => {
                 enableZoom
                 args={[camera, gl.domElement]}
                 enableDamping
-                enabled={api[0]}
+                enabled={!controlsLock[0]}
             />
-            <camContext.Provider value={api}>{children}</camContext.Provider>
+            <camContext.Provider value={controlsLock}>{children}</camContext.Provider>
         </>
     )
 }
