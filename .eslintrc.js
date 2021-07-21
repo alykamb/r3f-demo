@@ -1,3 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable import/no-extraneous-dependencies */
+const a11yOff = Object.keys(require('eslint-plugin-jsx-a11y').rules).reduce((acc, rule) => {
+    acc[`jsx-a11y/${rule}`] = 'off'
+    return acc
+}, {})
+
 module.exports = {
     root: true,
     env: {
@@ -11,7 +18,9 @@ module.exports = {
         'plugin:jest/recommended',
         'plugin:prettier/recommended',
     ],
+
     rules: {
+        ...a11yOff,
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-extra-parens': 'off',

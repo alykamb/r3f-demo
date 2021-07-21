@@ -1,6 +1,6 @@
 import './App.scss'
 
-// import { Stats } from '@react-three/drei'
+import { Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import React from 'react'
 
@@ -17,7 +17,7 @@ function App() {
         <div className="app">
             <Controller />
             <Canvas camera={{ position: [2, 2, 2] }}>
-                {/* <Stats /> */}
+                <Stats />
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
                 <Controls>
