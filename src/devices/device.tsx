@@ -36,18 +36,18 @@ export const Device = () => {
             <mesh
                 ref={ref}
                 {...bindDrag}
-                // onClick={onClick}
-                // onPointerOver={onPointerOver}
-                // onPointerMissed={onPointerMissed}
-                // onPointerOut={onPointerOut}
+                onClick={onClick}
+                onPointerOver={onPointerOver}
+                onPointerMissed={onPointerMissed}
+                onPointerOut={onPointerOut}
             >
                 <boxGeometry args={[1, 1, 1]} />
-                <shaderMaterial
+                {/* <shaderMaterial
                     uniforms={uniforms.current}
                     fragmentShader={fragmentShader}
                     // vertexShader={vertexShader}
-                />
-                {/* {material || <meshStandardMaterial color={hovered ? 'cyan' : 'white'} />} */}
+                /> */}
+                {material || <meshStandardMaterial color={'grey'} />}
             </mesh>
         </group>
     )

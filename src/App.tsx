@@ -2,15 +2,25 @@ import './App.scss'
 
 import { Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import React from 'react'
+import React, { memo, useEffect, useRef } from 'react'
 
 import { Controller } from './controller/controller'
 import { Controls } from './Controls'
 import { Devices } from './devices/devices'
+import { createGame } from './game/game'
 // import Fog from './Fog'
 import Sphere from './Sphere'
 // import ReactDOM from 'react-dom'
 // import logo from './logo.svg'
+
+export const rawApp = memo(() => {
+    const app = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        createGame(app.current!)
+    }, [])
+    return <div className="app" ref={app}></div>
+})
 
 function App() {
     return (

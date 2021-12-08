@@ -1,5 +1,10 @@
 import { createContext } from 'react'
+import { Mesh } from 'three'
 
-export const camContext = createContext<[boolean?, React.Dispatch<React.SetStateAction<boolean>>?]>(
-    [],
-)
+export interface SelectionContext {
+    add(ref: Mesh): void
+    remove(ref: Mesh): void
+    selected: Mesh[]
+}
+
+export const selectionContext = createContext<SelectionContext>({} as SelectionContext)

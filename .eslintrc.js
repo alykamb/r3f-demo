@@ -13,7 +13,7 @@ module.exports = {
     plugins: ['react', 'import', '@typescript-eslint', 'sort-class-members', 'simple-import-sort'],
     extends: [
         'airbnb-typescript',
-        'airbnb/hooks',
+        // 'airbnb/hooks',
         'plugin:@typescript-eslint/recommended',
         'plugin:jest/recommended',
         'plugin:prettier/recommended',
@@ -29,6 +29,7 @@ module.exports = {
         'import/prefer-default-export': 'off',
         // 'jsx-a11y/label-has-associated-control': 'off',
         // 'jsx-a11y/control-has-associated-label': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
         'sort-class-members/sort-class-members': [
             1,
             {
