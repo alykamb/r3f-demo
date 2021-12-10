@@ -1,27 +1,16 @@
 import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { ThreeEvent } from '@react-three/fiber/dist/declarations/src/core/events'
-import { MutableRefObject, useCallback, useContext, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { Subject } from 'rxjs'
 import * as THREE from 'three'
-import { BufferGeometry, Material, Mesh } from 'three'
+import { Vector3 } from 'three'
 
 import { camContext } from '../contexts/camera'
 
-interface UseDragOptions {
-    ref?: MutableRefObject<Mesh<BufferGeometry, Material | Material[]> | undefined>
-    camera?: Camera
-    raycaster?: THREE.Raycaster
-    mouse?: THREE.Vector2
-}
-
-export const useDrag = (options?: UseDragOptions) => {
+export const useDrag = () => {
     const [isDragging, setIsDragging] = useState(false)
-    const three = useThree()
-    const defaultRef = useRef<THREE.Mesh>()
 
-    const mouse = options?.mouse || three.mouse
-    const raycaster = options?.raycaster || three.raycaster
-    const camera = options?.camera || three.camera
-    const ref = options?.ref || defaultRef
+    const { mouse, raycaster, camera } = useThree()
 
     const [, lockControls] = useContext(camContext)
 
@@ -29,10 +18,13 @@ export const useDrag = (options?: UseDragOptions) => {
     const worldPosition = useRef(new THREE.Vector3())
     const offset = useRef(new THREE.Vector3())
     const intersects = useRef(new THREE.Vector3())
+    const originalPosition = useRef(new Vector3())
+    const newPostion$ = useRef(new Subject<Vector3>())
 
-    const onPointerDown = useCallback(
-        (e: ThreeEvent<PointerEvent>) => {
-            worldPosition.current.copy(e.object.position)
+    const startDrag = useCallback(
+        (position: Vector3) => {
+            originalPosition.current.copy(position)
+            worldPosition.current.copy(position)
 
             plane.current
                 .setFromNormalAndCoplanarPoint(
@@ -43,18 +35,32 @@ export const useDrag = (options?: UseDragOptions) => {
 
             raycaster.setFromCamera(mouse, camera)
             raycaster.ray.intersectPlane(plane.current, intersects.current)
-            offset.current.copy(e.object.position).sub(intersects.current)
+            offset.current.copy(position).sub(intersects.current)
 
             setIsDragging(true)
-            if (lockControls) {
-                lockControls(true)
-            }
         },
-        [setIsDragging, camera, lockControls, intersects, offset, raycaster, mouse],
+        [setIsDragging, camera, intersects, offset, raycaster, mouse],
     )
 
-    const onPointerUp = useCallback(() => {
+    const stopDrag = useCallback(() => {
         setIsDragging(false)
+    }, [setIsDragging, lockControls])
+
+    const cancelDrag = useCallback(() => {
+        stopDrag()
+        return originalPosition.current
+    }, [])
+
+    const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation()
+        startDrag(e.object.position)
+        if (lockControls) {
+            lockControls(true)
+        }
+    }
+
+    const onPointerUp = useCallback(() => {
+        cancelDrag()
         if (lockControls) {
             lockControls(false)
         }
@@ -64,9 +70,11 @@ export const useDrag = (options?: UseDragOptions) => {
         raycaster.setFromCamera(mouse, camera)
         if (isDragging && raycaster.ray.intersectPlane(plane.current, intersects.current)) {
             const newP = intersects.current.add(offset.current)
-            ref.current?.position.copy(newP)
+            newPostion$.current.next(newP)
         }
     })
+
+    const drag = () => new Observable()
 
     return {
         ref,

@@ -23,7 +23,7 @@ export const Device = () => {
     const hovered = false
     const ref = useRef<THREE.Mesh>()
     const { onPointerOver, onClick, onPointerMissed, material, onPointerOut } = useSelection(ref)
-    const { bindDrag } = useDrag({ ref })
+    const { bindDrag } = useDrag(ref)
 
     useFrame((s, delta) => {
         window.requestAnimationFrame(() => {

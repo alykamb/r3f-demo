@@ -7,6 +7,8 @@ import {
     Scene,
     WebGLRenderer,
 } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import Stats from 'three/examples/jsm/libs/stats.module'
 
 export function createGame(element: Element) {
     const scene: Scene = new Scene()
@@ -24,6 +26,12 @@ export function createGame(element: Element) {
     scene.add(gridHelper)
 
     const renderer: WebGLRenderer = new WebGLRenderer()
+
+    function render() {
+        renderer.render(scene, camera)
+    }
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.addEventListener('change', render)
     renderer.setSize(window.innerWidth, window.innerHeight)
     element.appendChild(renderer.domElement)
 
@@ -39,13 +47,16 @@ export function createGame(element: Element) {
 
     scene.add(cube)
 
-    const animate = function () {
+    const stats = Stats()
+    document.body.appendChild(stats.dom)
+    function animate() {
         requestAnimationFrame(animate)
 
         cube.rotation.x += 0.01
         cube.rotation.y += 0.01
 
-        renderer.render(scene, camera)
+        stats.update()
+        render()
     }
 
     window.addEventListener('resize', () => {

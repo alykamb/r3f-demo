@@ -3,11 +3,12 @@ import './App.scss'
 import { Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import React, { memo, useEffect, useRef } from 'react'
+import { Subject } from 'rxjs'
 
 import { Controller } from './controller/controller'
-import { Controls } from './Controls'
 import { Devices } from './devices/devices'
 import { createGame } from './game/game'
+import { ControlsProvider } from './providers/ControlsProvider'
 // import Fog from './Fog'
 import Sphere from './Sphere'
 // import ReactDOM from 'react-dom'
@@ -22,17 +23,27 @@ export const rawApp = memo(() => {
     return <div className="app" ref={app}></div>
 })
 
-function App() {
+const onPointerMissed$ = new Subject<ThreePointerEvent>()
+const onPointerMissed = (e: ThreePointerEvent) => onPointerMissed$.next(e)
+
+const onKeyPress$ = new Subject<React.KeyboardEvent<HTMLDivElement>>()
+const onKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => onKeyPress$.next(e)
+
+export function App() {
     return (
         <div className="app">
             <Controller />
-            <Canvas camera={{ position: [2, 2, 2] }}>
+            <Canvas
+                camera={{ position: [2, 2, 2] }}
+                onPointerMissed={onPointerMissed}
+                onKeyPress={onKeyPress}
+            >
                 <Stats />
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                <Controls>
+                <ControlsProvider onPointerMissed$={onPointerMissed$} onKeyPress$={onKeyPress$}>
                     <Devices />
-                </Controls>
+                </ControlsProvider>
                 {/* <Box position={[-1.2, 0, 0]} />
                 <Box position={[1.2, 0, 0]} />
                 <Box position={[2.4, 0, 0]} /> */}

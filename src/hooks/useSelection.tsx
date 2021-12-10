@@ -1,50 +1,32 @@
-import { useFrame, useThree } from '@react-three/fiber'
-import { ThreeEvent } from '@react-three/fiber/dist/declarations/src/core/events'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext } from 'react'
 
-import { selectionContext } from '../contexts/selection'
+import { controlsContext } from '../contexts/controls'
 
 export const useSelection = (ref: MeshRef) => {
-    const { mouse, camera, raycaster } = useThree()
-    const [isHovered, setHover] = useState(false)
-    raycaster.setFromCamera(mouse, camera)
-    const selection = useContext(selectionContext)
+    const {
+        selection: [selected, setSelected],
+    } = useContext(controlsContext)
 
-    const onClick = useCallback(
-        (e: ThreeEvent<MouseEvent>) => {
-            e.stopPropagation()
-            // e.preventDefault()
-            if (selection.selected.includes(ref.current!)) {
-                selection.remove(ref.current!)
-            } else {
-                selection.add(ref.current!)
-            }
-            // console.log('onClick', e.object)
-        },
-        [selection],
+    const add = useCallback(() => {
+        if (ref.current) {
+            setSelected((s) => [...s, ref.current!])
+        }
+    }, [])
+
+    const remove = useCallback(() => {
+        setSelected((s) => s.filter((i) => i !== ref.current))
+    }, [])
+
+    const toggleSelection = useCallback(
+        () => (selected.includes(ref.current!) ? remove() : add()),
+        [selected],
     )
 
-    const onPointerOver = useCallback((e: ThreeEvent<PointerEvent>) => {
-        e.stopPropagation()
-        // console.log('onPointerOver', e.object)
-        setHover(true)
-    }, [])
-    const onPointerMissed = useCallback((e: ThreeEvent<PointerEvent>) => {
-        e.stopPropagation()
-        // selection.remove(ref)
-        // console.log('onPointerMissed', e.object)
-    }, [])
-    const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
-        e.stopPropagation()
-        // console.log('onPointerOut', e.object)
-        setHover(false)
+    const clearSelection = useCallback(() => {
+        setSelected([])
     }, [])
 
-    const material = selection.selected.includes(ref.current!) ? (
-        <meshStandardMaterial color="red" />
-    ) : isHovered ? (
-        <meshStandardMaterial color="yellow" />
-    ) : null
-    console.log(selection.selected)
-    return { onPointerOver, onClick, onPointerMissed, material, onPointerOut }
+    const isSelected = selected.includes(ref.current!)
+
+    return { toggleSelection, clearSelection, remove, add, isSelected }
 }
