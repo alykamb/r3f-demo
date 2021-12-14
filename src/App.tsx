@@ -2,7 +2,7 @@ import './App.scss'
 
 import { Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import React, { memo, useEffect, useRef } from 'react'
+import React, { memo, MouseEvent, useEffect, useRef } from 'react'
 import { Subject } from 'rxjs'
 
 import { Controller } from './controller/controller'
@@ -26,22 +26,47 @@ export const rawApp = memo(() => {
 const onPointerMissed$ = new Subject<ThreePointerEvent>()
 const onPointerMissed = (e: ThreePointerEvent) => onPointerMissed$.next(e)
 
-const onKeyPress$ = new Subject<React.KeyboardEvent<HTMLDivElement>>()
-const onKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => onKeyPress$.next(e)
+const onKeyPress$ = new Subject<KeyboardEvent>()
+
+const onClick$ = new Subject<MouseEvent>()
+const onClick = (e: MouseEvent) => onClick$.next(e)
 
 export function App() {
+    const canvas = useRef<HTMLCanvasElement>(null)
+
+    useEffect(() => {
+        if (!canvas.current) {
+            return
+        }
+
+        canvas.current.tabIndex = 0
+        canvas.current.focus()
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (canvas.current == document.activeElement || e.key === 'Escape') {
+                onKeyPress$.next(e)
+            }
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [])
     return (
         <div className="app">
             <Controller />
             <Canvas
+                ref={canvas}
                 camera={{ position: [2, 2, 2] }}
                 onPointerMissed={onPointerMissed}
-                onKeyPress={onKeyPress}
+                onClick={onClick as any}
             >
                 <Stats />
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                <ControlsProvider onPointerMissed$={onPointerMissed$} onKeyPress$={onKeyPress$}>
+                <ControlsProvider
+                    onPointerMissed$={onPointerMissed$}
+                    onKeyPress$={onKeyPress$}
+                    mouseClick$={onClick$}
+                >
                     <Devices />
                 </ControlsProvider>
                 {/* <Box position={[-1.2, 0, 0]} />

@@ -1,24 +1,24 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useState } from 'react'
+import { Object3D } from 'three'
 
-import { controlsContext } from '../contexts/controls'
+export const useSelection = () => {
+    const [selected, setSelected] = useState<Object3D[]>([])
 
-export const useSelection = (ref: MeshRef) => {
-    const {
-        selection: [selected, setSelected],
-    } = useContext(controlsContext)
-
-    const add = useCallback(() => {
-        if (ref.current) {
-            setSelected((s) => [...s, ref.current!])
-        }
+    const add = useCallback((obj: Object3D) => {
+        setSelected((s) => {
+            if (!s.includes(obj)) {
+                return [...s, obj]
+            }
+            return s
+        })
     }, [])
 
-    const remove = useCallback(() => {
-        setSelected((s) => s.filter((i) => i !== ref.current))
+    const remove = useCallback((obj: Object3D) => {
+        setSelected((s) => s.filter((i) => i !== obj))
     }, [])
 
     const toggleSelection = useCallback(
-        () => (selected.includes(ref.current!) ? remove() : add()),
+        (obj: Object3D) => (selected.includes(obj) ? remove(obj) : add(obj)),
         [selected],
     )
 
@@ -26,7 +26,22 @@ export const useSelection = (ref: MeshRef) => {
         setSelected([])
     }, [])
 
-    const isSelected = selected.includes(ref.current!)
+    const getMidPoint = useCallback(() => {
+        if (!selected.length) {
+            return selected[0].position
+        }
 
-    return { toggleSelection, clearSelection, remove, add, isSelected }
+        return selected.reduce((acc, obj) => {
+            const dir = acc.sub(obj.position)
+            const len = dir.length()
+            const normalizedDir = dir.normalize().multiplyScalar(len * 0.5)
+            return obj.position.clone().add(normalizedDir)
+        }, selected[0].position.clone())
+    }, [selected])
+
+    const isSelected = useCallback((obj: Object3D) => selected.includes(obj), [selected])
+
+    console.log(selected)
+
+    return { toggleSelection, clearSelection, remove, add, isSelected, getMidPoint, selected }
 }

@@ -2,6 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 
+import { useControls } from '../hooks/useControls'
 import { useDrag } from '../hooks/useDrag'
 import { useSelection } from '../hooks/useSelection'
 import fragmentShader from './device.frag?raw'
@@ -20,10 +21,8 @@ export const Device = () => {
         u_mouse: { type: 'v2', value: new THREE.Vector2() },
     })
 
-    const hovered = false
     const ref = useRef<THREE.Mesh>()
-    const { onPointerOver, onClick, onPointerMissed, material, onPointerOut } = useSelection(ref)
-    const { bindDrag } = useDrag(ref)
+    const { onPointerOver, onPointerOut, onClick, material } = useControls(ref)
 
     useFrame((s, delta) => {
         window.requestAnimationFrame(() => {
@@ -35,10 +34,8 @@ export const Device = () => {
         <group>
             <mesh
                 ref={ref}
-                {...bindDrag}
                 onClick={onClick}
                 onPointerOver={onPointerOver}
-                onPointerMissed={onPointerMissed}
                 onPointerOut={onPointerOut}
             >
                 <boxGeometry args={[1, 1, 1]} />
