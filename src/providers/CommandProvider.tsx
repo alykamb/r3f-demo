@@ -1,14 +1,21 @@
-import { UndoableResult } from '@collidor/command'
+import { CommandBusBase, UndoableResult } from '@collidor/command'
 import { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import { Subject, tap } from 'rxjs'
 
-import { editBus } from '../commands/editMode/editMode.bus'
+import { CommandContext } from '../contexts/command'
 
-export function CommandProvider(onKeyPress$: Subject<KeyboardEvent>) {
-    const [queue, setQueue] = useState<UndoableResult[]>([])
+interface CommandProviderProps {
+    children: React.ReactNode
+    onKeyPress$: Subject<KeyboardEvent>
+    bus: CommandBusBase
+}
 
-    const addToQueue = useCallback((result: UndoableResult) => {
-        setQueue((q) => {
+export function CommandProvider({ children, onKeyPress$, bus }: CommandProviderProps) {
+    const [queue, setQueue] = useState<Array<[any, () => Promise<any>]>>([])
+
+    const addToQueue = useCallback((result: [any, () => Promise<any>]) => {
+        setQueue((q: Array<[any, () => Promise<any>]>) => {
             if (q.length > 10) {
                 q.pop()
             }
@@ -17,9 +24,9 @@ export function CommandProvider(onKeyPress$: Subject<KeyboardEvent>) {
     }, [])
 
     useEffect(() => {
-        ;(editBus as any).afterExecute(
-            tap((result: UndoableResult) => {
-                if ((result as UndoableResult).undo) {
+        ;(bus as any).afterExecute(
+            tap((result: [any, () => Promise<any>]) => {
+                if (result as [any, () => Promise<any>]) {
                     addToQueue(result)
                 }
             }),
@@ -29,7 +36,7 @@ export function CommandProvider(onKeyPress$: Subject<KeyboardEvent>) {
             if (e.ctrlKey && e.key === 'z') {
                 setQueue((q) => {
                     const newQueue = q.shift()
-                    void newQueue?.undo?.()
+                    void newQueue?.[1]?.()
                     return [...q]
                 })
             }
@@ -42,5 +49,5 @@ export function CommandProvider(onKeyPress$: Subject<KeyboardEvent>) {
         console.log(queue)
     }, [queue])
 
-    return null
+    return <CommandContext.Provider value={addToQueue}>{children}</CommandContext.Provider>
 }

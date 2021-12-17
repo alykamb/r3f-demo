@@ -7,7 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@collidor/command": "^0.3.3",
+    "@collidor/command": "^0.4.0",
     "@hookstate/core": "^3.0.13",
     "@react-three/drei": "^7.27.1",
     "@react-three/fiber": "^7.0.21",
