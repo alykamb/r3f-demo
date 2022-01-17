@@ -5,9 +5,11 @@ import { Canvas } from '@react-three/fiber'
 import React, { memo, MouseEvent, useEffect, useRef } from 'react'
 import { Subject } from 'rxjs'
 
+import { controller, editBus } from './commands/editMode/editMode.bus'
 import { Controller } from './controller/controller'
 import { Devices } from './devices/devices'
 import { createGame } from './game/game'
+import { CommandProvider } from './providers/CommandProvider'
 import { ControlsProvider } from './providers/ControlsProvider'
 // import Fog from './Fog'
 import Sphere from './Sphere'
@@ -28,8 +30,7 @@ const onPointerMissed = (e: ThreePointerEvent) => onPointerMissed$.next(e)
 
 const onKeyPress$ = new Subject<KeyboardEvent>()
 
-const onClick$ = new Subject<MouseEvent>()
-const onClick = (e: MouseEvent) => onClick$.next(e)
+const onClick$ = new Subject<PointerEvent>()
 
 export function App() {
     const canvas = useRef<HTMLCanvasElement>(null)
@@ -47,33 +48,42 @@ export function App() {
             }
         }
 
+        const onClick = (e: PointerEvent) => {
+            console.log(e)
+            if (canvas.current == document.activeElement) {
+                onClick$.next(e)
+            }
+        }
+
         window.addEventListener('keydown', onKeyDown)
-        return () => window.removeEventListener('keydown', onKeyDown)
+        window.addEventListener('click', onClick as any)
+        return () => {
+            window.removeEventListener('keydown', onKeyDown)
+            window.removeEventListener('click', onClick as any)
+        }
     }, [])
     return (
         <div className="app">
             <Controller />
-            <Canvas
-                ref={canvas}
-                camera={{ position: [2, 2, 2] }}
-                onPointerMissed={onPointerMissed}
-                onClick={onClick as any}
-            >
+            <Canvas ref={canvas} camera={{ position: [2, 2, 2] }} onPointerMissed={onPointerMissed}>
                 <Stats />
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                <ControlsProvider
-                    onPointerMissed$={onPointerMissed$}
-                    onKeyPress$={onKeyPress$}
-                    mouseClick$={onClick$}
-                >
-                    <Devices />
-                </ControlsProvider>
+                <CommandProvider onKeyPress$={onKeyPress$} controller={controller} bus={editBus}>
+                    <ControlsProvider
+                        onPointerMissed$={onPointerMissed$}
+                        onKeyPress$={onKeyPress$}
+                        mouseClick$={onClick$}
+                        bus={editBus}
+                    >
+                        <Devices />
+                    </ControlsProvider>
+                </CommandProvider>
                 {/* <Box position={[-1.2, 0, 0]} />
                 <Box position={[1.2, 0, 0]} />
                 <Box position={[2.4, 0, 0]} /> */}
 
-                <Sphere />
+                {/* <Sphere /> */}
                 <gridHelper args={[20, 40, 'red', '#ff0055']} />
             </Canvas>
         </div>

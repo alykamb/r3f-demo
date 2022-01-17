@@ -341,13 +341,13 @@
   resolved "https://registry.yarnpkg.com/@chevrotain/utils/-/utils-9.1.0.tgz#a34ab0696f9491dee934e848984517d226356f21"
   integrity sha512-llLJZ8OAlZrjGlBvamm6Zdo/HmGAcCLq5gx7cSwUX8No+n/8ip+oaC4x33IdZIif8+Rh5dQUIZXmfbSghiOmNQ==
 
-"@collidor/command@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@collidor/command/-/command-0.4.0.tgz#a24dafc917f7c17d3552087be300838960c271c7"
-  integrity sha512-Jh6UPUXCy0FaOKcudjrjT0iMz1QoKjhOEa6EvShRRmFMtx8Ziz3byP+Q1YV1512qhzkZgXvmnF9FS+kV/DBisA==
+"@collidor/command@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@collidor/command/-/command-0.4.3.tgz#470843fe768454be6601154f2dd4d9be2c8875a6"
+  integrity sha512-5R5+T43XD9HqFdJOaNOb3C+o2c9C0bAcRm34m+nL8pvX02Ku3BRJ7fMuIr3Bd2XhoH6yfIE4wAGTzqhHoxyiGw==
   dependencies:
     reflect-metadata "^0.1.13"
-    rxjs "^7.4.0"
+    rxjs "^7.5.2"
     uuid "^8.3.2"
 
 "@eslint/eslintrc@^1.0.5":
@@ -3759,6 +3759,13 @@ rxjs@^7.4.0:
   dependencies:
     tslib "~2.1.0"
 
+rxjs@^7.5.2:
+  version "7.5.2"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.2.tgz#11e4a3a1dfad85dbf7fb6e33cbba17668497490b"
+  integrity sha512-PwDt186XaL3QN5qXj/H9DGyHhP3/RYYgZZwqBv9Tv8rsAaiwFH1IsJJlcgD37J7UW5a6O67qX0KWKS3/pu0m4w==
+  dependencies:
+    tslib "^2.1.0"
+
 safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
@@ -4123,6 +4130,11 @@ tslib@^1.8.1:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
+tslib@^2.1.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 tslib@~2.1.0:
   version "2.1.0"
