@@ -8,7 +8,7 @@ import { Subject } from 'rxjs'
 import { controller, editBus } from './commands/editMode/editMode.bus'
 import { Controller } from './controller/controller'
 import { Devices } from './devices/devices'
-import { createGame } from './game/game'
+import { initScene } from './game/main'
 import { CommandProvider } from './providers/CommandProvider'
 import { ControlsProvider } from './providers/ControlsProvider'
 // import Fog from './Fog'
@@ -20,7 +20,7 @@ export const rawApp = memo(() => {
     const app = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        createGame(app.current!)
+        void initScene(app.current!)
     }, [])
     return <div className="app" ref={app}></div>
 })
@@ -90,4 +90,4 @@ export function App() {
     )
 }
 
-export default App
+export default rawApp

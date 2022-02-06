@@ -108,3 +108,40 @@ export const ControlsProvider: FunctionComponent<Props> = ({
         </>
     )
 }
+
+interface IPedido {
+    id: number
+    name: string
+    itens: IPedidoItem[]
+}
+
+interface IPedidoItem {
+    id: number
+    name: string
+    price: number
+}
+
+interface IPedidoProp {
+    pedido: IPedido
+}
+
+export const Pedido = ({ pedido }: IPedidoProp) => {
+    return (
+        <div>
+            <h1>{pedido.name}</h1>
+            {pedido.itens.map((item) => (
+                <span key={item.id}>{item.name}</span>
+            ))}
+        </div>
+    )
+}
+
+export const Pedidos = ({ pedidos }: { pedidos: IPedido[] }) => {
+    return (
+        <div className="pedidos">
+            {pedidos.map((pedido) => (
+                <Pedido key={pedido.id} pedido={pedido} />
+            ))}
+        </div>
+    )
+}

@@ -1,6 +1,6 @@
 import { CommandBusBase } from '@collidor/command'
 import { UndoableCommandController } from '@collidor/command/dist/plugins/undoableCommand'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import React from 'react'
 import { Subject } from 'rxjs'
 

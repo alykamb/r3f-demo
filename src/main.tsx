@@ -1,4 +1,5 @@
 import './index.css'
+import 'reflect-metadata'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
